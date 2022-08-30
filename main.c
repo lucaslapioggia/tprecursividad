@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -26,9 +25,75 @@ void InvertirEnterosArch(FILE*pArchEnteros, int c,int u);
 
 int main()
 {
+  int numero, pot,ban, val=0,ejercicio, option,cant;
+  int arreglosEnteros[DIM];
+  srand(time(NULL));
+  val = cargaArregloRandom(arreglosEnteros,val,DIM);
 
+  do{
+    system("cls");
+    menu();
+    scanf("d", ejercicio);
 
+    switch(ejercicio)
+    {
+  case 1:
+    printf("\n Ingrese un numero\n");
+    scanf("%d", &numero);
+    printf("\n El factorial del numero %d es %d\n", numero,factorial(numero));
+        break;
+  case 2:
+    printf("\nIngrese la potencia del numero \n");
+    scanf("%d", &pot);
+    printf("\n El numero %d elevado a la potencia %d es %d\n", numero,pot, potencia(numero,pot));
+        break;
+    case 3:
+    mostrarArregloRecursivo(arreglosEnteros,val,0);
+        break;
+    case 4:
+        mostrarArregloRecursivoInvertido(arreglosEnteros,val,0);
+        break;
+    case 5:
+        ban = capicua(arreglosEnteros,val,0);
+        if(ban==0)
+        {
+            printf("\nNo es capicua\n");
+        }
+        else
+        {
+            printf("\nEs capicua\n");
+        }
+        break;
+        
+    case 6:
+        printf("\n La suma del arreglo es de %d:\n", sumaRecursiva(arreglosEnteros,val,0));
+        break;
+        
+    case 7:
+        printf("\n El menor del arreglo es %d\n", BuscarMenorRecursivo(arreglosEnteros,val,0));
+        break;
+        
+    case 8:
+        arreglo2archivoCompleto(arreglosEnteros,val);
+        FILE*pArchInt =fopen(AR_ENTEROS, "r+b");
+        muestraArchivoEntero();
+        printf("\nEl menor del archivo de enteros es: %d\n", BuscarMenorArchiRecursivo(pArchInt));
+        break;
+        
+    case 9:
+        cant = cuentaEnterosArch(pArchInt);
+        InvertirEnterosArch(pArchInt, 0, cant);
+        muestraArchivoEntero();
+        break;
+        
+    default:
+        printf("\nOpcion Incorrecta\n");
+    }
+printf("\nDesea Continuar? Presiones ESC para salir...");
+option = getch();
+  } while(option!=ESC);
 
+return 0;
 }
 
 //EJERCICIO 1
@@ -148,3 +213,51 @@ int BuscarMenorRecursivo(int a[], int validos, int c)
 }
 
 //EJERCICIO 8
+
+void arreglo2archivoCompleto(int a[], int v)
+{
+    FILE *pArchEnteros = fopen(AR_ENTEROS,"ab");
+    if(pArchEnteros)
+    {
+        fwrite(a,sizeof(int),v,pArchEnteros);
+        fclose(pArchEnteros);
+    }
+}
+
+void muestraArchivoEntero()
+{
+    FILE*pArchEnteros =fopen(AR_ENTEROS, "rb");
+
+    int num;
+
+    if(pArchEnteros)
+    {
+        while(fread(&num,sizeof(int),1, pArchEnteros)>0)
+        {
+            printf("%d", num);
+        }
+
+        fclose(pArchEnteros);
+    }
+    printf("\n");
+}
+
+int BuscarMenorArchiRecursivo(FILE*pArchEntero)
+{
+   int menor, aux;
+
+   if(fread(&aux, sizeof(int), 1,pArchEntero)==0)
+   {
+       fseek(pArchEntero, sizeof(int)*(-1), SEEK_END);
+       fread(&menor, sizeof(int),1 , pArchEntero);
+   }
+   else
+   {
+       menor = BuscarMenorArchiRecursivo(pArchEntero);
+       if(aux<menor)
+       {
+           menor=aux;
+       }
+   }
+   return menor;
+}
